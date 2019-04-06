@@ -37,8 +37,7 @@ void faculty_Queue(int no_of_process) {
 
     // sorting the processes by their ARRIVAL time.
     // if the ARRIVAL time is same then scheduling is based on FCFS.
-    for(count = 0; count < no_of_process; count++) 
-	{
+    for(count = 0; count < no_of_process; count++) {
         for(int x = count +1; x < count; x++){
             if(faculty_Process[count].arrival_time > faculty_Process[x].arrival_time) {
                 temp_Struct = faculty_Process[count];
@@ -47,3 +46,56 @@ void faculty_Queue(int no_of_process) {
             }
         }
     }
+
+    // initialy all the burst time is remaining and completion of process is zero.
+    for(count = 0; count < no_of_process; count++) {
+        faculty_Process[count].remaining = faculty_Process[count].burst_time;
+        faculty_Process[count].completion_time = 0;
+    }
+
+    int total_time, queue, round_robin[20];
+    total_time = 0;
+    queue = 0;
+    round_robin[queue] = 0;
+
+    
+    int flag, x, n, z, waiting_time = 0;
+    do {
+        for(count = 0; count < no_of_process; count++){
+            if(total_time >= faculty_Process[count].arrival_time){
+                z = 0;
+                for(x = 0; x <= queue; x++) {
+                    if(round_robin[x] == count) {
+                        z++;
+                    }
+                }
+                if(z == 0) {
+                    queue++; 
+                    round_robin[queue] == count;
+                }
+            }
+        }
+
+        if(queue == 0) {
+            n = 0;
+        }
+        if(faculty_Process[n].remaining == 0) {
+            n++ ;
+        }
+        if(n > queue) {
+            n = (n - 1) % queue;
+        }
+        if(n <= queue) {
+            if(faculty_Process[n].remaining > 0) {
+                if(faculty_Process[n].remaining < quantum_time){
+                    total_time += faculty_Process[n].remaining;
+                    faculty_Process[n].remaining = 0;
+                }else {
+                    total_time += quantum_time;
+                    faculty_Process[n].remaining -= quantum_time;
+                }
+                faculty_Process[n].completion_time = total_time;
+            }
+            n++;
+        }
+       
